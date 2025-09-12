@@ -1,0 +1,64 @@
+@model IEnumerable<TasksManagerMVC.Models.Task>
+
+@{
+    ViewData["Title"] = "Tasks";
+}
+
+<div class="container">
+    <h2 class="mb-4">My Tasks</h2>
+
+    <div class="mb-3">
+        <a asp-action="Create" class="btn btn-primary">Create New Task</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info" role="alert">
+            No tasks found. Start by creating a new task!
+        </div>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var item in Model)
+            {
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <form asp-action="ToggleComplete" method="post" class="me-3">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-sm @(item.IsCompleted ? "btn-success" : "btn-outline-secondary")">
+                                <i class="bi @(item.IsCompleted ? "bi-check-circle-fill" : "bi-circle")"></i>
+                            </button>
+                        </form>
+                        <span class="@(item.IsCompleted ? "text-decoration-line-through text-muted" : "")">
+                            @item.Description
+                        </span>
+                    </div>
+                    <div>
+                        <form asp-action="Delete" method="post" class="d-inline"
+                              onsubmit="return confirm('Are you sure you want to delete this task?');">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Show toast notification if there's a message in TempData
+        @if (TempData["Message"] != null)
+        {
+            <text>
+            $(document).ready(function() {
+                $('.toast').toast('show');
+            });
+            </text>
+        }
+    </script>
+}
